@@ -1,0 +1,5 @@
+allure-pytest==2.13.5
+pytest==8.2.0
+requests==2.31.0
+selenium==4.20.0
+pydantic==2.7.1
