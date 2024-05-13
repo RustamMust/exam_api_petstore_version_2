@@ -11,15 +11,14 @@ from payloads.payloads import payload_not_exist
 from payloads.payloads import object_id_not_exist
 from conftest import object_id
 from models.response_object_model import Item
+from conftest import BASE_URL
 
-
-BASE_URL = 'https://petstore.swagger.io/v2/pet/'
 
 
 @allure.feature('Создание объекта')
 @pytest.mark.parametrize("payload, expected_status_code", [
     (payload_create_object_200, 200),
-    (payload_empty, 200),
+    (payload_empty, 405),
     (payload_none, 415)
 ])
 def test_create_object_all(payload, expected_status_code):
@@ -36,10 +35,10 @@ def test_create_object_all(payload, expected_status_code):
 
 @allure.feature('Изменение объекта')
 @pytest.mark.parametrize("payload, object_id, expected_status_code", [
-    (payload_update_object_200, object_id, 405),
+    (payload_update_object_200, object_id, 200),
     (payload_update_object_405, object_id, 405),
-    (payload_not_exist, object_id, 405),
-    (payload_update_object_200, object_id_not_exist, 405)
+    (payload_not_exist, object_id, 404),
+    (payload_update_object_200, object_id_not_exist, 400)
 ])
 def test_update_object_all(payload, object_id, expected_status_code):
     with allure.step("Отправка PUT-запроса"):
@@ -51,7 +50,7 @@ def test_update_object_all(payload, object_id, expected_status_code):
 @allure.feature('Получение объекта')
 @pytest.mark.parametrize("status_endpoint, expected_status_code", [
     ('findByStatus?status=sold', 200),
-    ('findByStatus?status=lost', 200)
+    ('findByStatus?status=lost', 400)
 ])
 def test_get_object_all(status_endpoint, expected_status_code):
     with allure.step("Отправка GET-запроса"):
@@ -67,9 +66,9 @@ def test_get_object_all(status_endpoint, expected_status_code):
 
 @allure.feature('Удаление объекта')
 @pytest.mark.parametrize("obj_id, expected_status_code", [
+    (object_id, 200),
     (object_id, 404),
-    (object_id, 404),
-    (object_id_not_exist, 404)
+    (object_id_not_exist, 400)
 ])
 def test_delete_object_all(obj_id, expected_status_code):
     with allure.step("Отправка DELETE-запроса"):
